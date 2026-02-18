@@ -1,11 +1,3 @@
-
-```button
-name Log Exercise
-type command
-action QuickAdd: Add Exercise1
-color red
-```
-^button-xsy8
 ### Workout Calendar
 
 ```dataviewjs
