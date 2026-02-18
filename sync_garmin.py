@@ -30,9 +30,9 @@ def parse_args():
     p = argparse.ArgumentParser(description="Sync Garmin activities to Obsidian workout notes.")
     p.add_argument(
         "--vault",
-        default=str(Path.home() / "Brain"),
+        default=str(Path(__file__).parent / "demo-vault"),
         metavar="PATH",
-        help="Path to Obsidian vault (default: ~/Brain)",
+        help="Path to Obsidian vault (default: demo-vault/ next to this script)",
     )
     return p.parse_args()
 
