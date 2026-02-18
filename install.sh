@@ -8,6 +8,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV="$SCRIPT_DIR/.venv"
 PLIST_NAME="com.avelouk.garmin-sync-obsidian.plist"
 PLIST_DST="$HOME/Library/LaunchAgents/$PLIST_NAME"
 DEFAULT_VAULT="$SCRIPT_DIR/demo-vault"
@@ -30,20 +31,23 @@ echo ""
 echo "  Vault: $VAULT_PATH"
 echo ""
 
-# ── Dependencies ──────────────────────────────────────────────────────────────
+# ── Virtual environment + dependencies ───────────────────────────────────────
+
+echo "==> Creating virtual environment..."
+python3 -m venv "$VENV"
 
 echo "==> Installing Python dependency..."
-pip3 install garth
+"$VENV/bin/pip" install --quiet garth
 
 # ── First sync ────────────────────────────────────────────────────────────────
 
 echo ""
 echo "==> Running first sync (you'll be prompted for Garmin credentials)..."
-python3 "$SCRIPT_DIR/sync_garmin.py" --vault "$VAULT_PATH"
+"$VENV/bin/python" "$SCRIPT_DIR/sync_garmin.py" --vault "$VAULT_PATH"
 
 # ── Install launchd job ───────────────────────────────────────────────────────
-# Write the plist directly so the vault path and script path are baked in,
-# rather than copying the repo template which has placeholder defaults.
+# Write the plist directly so vault path, script path, and python path are
+# baked in — the repo plist is just a reference template.
 
 echo ""
 echo "==> Installing launchd job (daily at 09:00 + on every login)..."
@@ -59,7 +63,7 @@ cat > "$PLIST_DST" << PLIST
 
     <key>ProgramArguments</key>
     <array>
-        <string>$(which python3)</string>
+        <string>${VENV}/bin/python</string>
         <string>${SCRIPT_DIR}/sync_garmin.py</string>
         <string>--vault</string>
         <string>${VAULT_PATH}</string>
@@ -94,7 +98,7 @@ echo ""
 echo "  Vault:       $VAULT_PATH"
 echo "  Auto-sync:   daily at 09:00 and on every login/restart"
 echo "  Logs:        $SCRIPT_DIR/sync.log"
-echo "  Manual sync: python3 $SCRIPT_DIR/sync_garmin.py --vault $VAULT_PATH"
+echo "  Manual sync: $VENV/bin/python $SCRIPT_DIR/sync_garmin.py --vault $VAULT_PATH"
 echo ""
 echo "  To uninstall the scheduled job:"
 echo "    launchctl unload $PLIST_DST && rm $PLIST_DST"
