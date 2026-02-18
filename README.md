@@ -56,6 +56,6 @@ Stored in `sync.log` in this directory.
 ## Uninstall scheduled job
 
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.belzebub.garmin-sync-obsidian.plist
-rm ~/Library/LaunchAgents/com.belzebub.garmin-sync-obsidian.plist
+launchctl unload ~/Library/LaunchAgents/com.avelouk.garmin-sync-obsidian.plist
+rm ~/Library/LaunchAgents/com.avelouk.garmin-sync-obsidian.plist
 ```

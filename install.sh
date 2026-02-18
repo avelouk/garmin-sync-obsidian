@@ -8,7 +8,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLIST_NAME="com.belzebub.garmin-sync-obsidian.plist"
+PLIST_NAME="com.avelouk.garmin-sync-obsidian.plist"
 PLIST_DST="$HOME/Library/LaunchAgents/$PLIST_NAME"
 DEFAULT_VAULT="$SCRIPT_DIR/demo-vault"
 
@@ -55,7 +55,7 @@ cat > "$PLIST_DST" << PLIST
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.belzebub.garmin-sync-obsidian</string>
+    <string>com.avelouk.garmin-sync-obsidian</string>
 
     <key>ProgramArguments</key>
     <array>

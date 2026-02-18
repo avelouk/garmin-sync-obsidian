@@ -5,9 +5,8 @@
 <dict>
     <!-- Unique label for launchd -->
     <key>Label</key>
-    <string>com.belzebub.garmin-sync-obsidian</string>
+    <string>com.avelouk.garmin-sync-obsidian</string>
 
-    <!-- Run: /opt/homebrew/bin/python3 /Users/belzebub/code/garmin-sync-obsidian/sync_garmin.py -->
     <key>ProgramArguments</key>
     <array>
         <string>/opt/homebrew/bin/python3</string>
@@ -25,9 +24,9 @@
 
     <!-- If the Mac was asleep at 09:00, run as soon as it wakes up -->
     <key>StandardOutPath</key>
-    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>
+    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>  <!-- update if repo moves -->
     <key>StandardErrorPath</key>
-    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>
+    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>  <!-- update if repo moves -->
 
     <!-- Also run immediately on login (handles restarts / missed 09:00) -->
     <key>RunAtLoad</key>
