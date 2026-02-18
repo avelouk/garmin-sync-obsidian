@@ -7,18 +7,14 @@ It contains 94 dummy workout entries spanning 2024–2026.
 
 1. Open Obsidian → **Open another vault** → **Open folder as vault**
 2. Select this `demo-vault` folder
-3. Install the two required community plugins:
-   - **Dataview** — queries the workout notes
-   - **Heatmap Calendar** — renders the GitHub-style calendar
+   > Both plugins (Dataview and Heatmap Calendar) are already bundled in
+   > `.obsidian/plugins/` — no installation needed.
 
-   > The plugins are already listed in `.obsidian/community-plugins.json` and
-   > will be auto-enabled once installed.
-
-4. **Enable JavaScript queries in Dataview:**
+3. **Enable JavaScript queries in Dataview:**
    Settings → Dataview → turn on **Enable JavaScript Queries**
    (the calendar uses a `dataviewjs` block and won't render without this)
 
-5. Open **Workout routine.md** to see the calendar
+4. Open **Workout view.md** to see the calendar
 
 ## Test the sync script against this vault
 
