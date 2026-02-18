@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Unique label for launchd -->
+    <key>Label</key>
+    <string>com.belzebub.garmin-sync-obsidian</string>
+
+    <!-- Run: /opt/homebrew/bin/python3 /Users/belzebub/code/garmin-sync-obsidian/sync_garmin.py -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <string>/Users/belzebub/code/garmin-sync-obsidian/sync_garmin.py</string>
+    </array>
+
+    <!-- Run daily at 09:00 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- If the Mac was asleep at 09:00, run as soon as it wakes up -->
+    <key>StandardOutPath</key>
+    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>
+
+    <!-- Don't run immediately on load — wait for next 09:00 -->
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

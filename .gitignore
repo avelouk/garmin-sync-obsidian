@@ -1,0 +1,11 @@
+# State & logs (local only)
+.sync_state.json
+sync.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Secrets (garth tokens live in ~/.garth, not here — just in case)
+.garth/
