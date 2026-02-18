@@ -29,8 +29,8 @@
     <key>StandardErrorPath</key>
     <string>/Users/belzebub/code/garmin-sync-obsidian/sync.log</string>
 
-    <!-- Don't run immediately on load — wait for next 09:00 -->
+    <!-- Also run immediately on login (handles restarts / missed 09:00) -->
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
 </dict>
 </plist>

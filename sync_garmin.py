@@ -9,12 +9,13 @@ First run:  python3 sync_garmin.py          (will prompt for Garmin credentials)
 Subsequent: python3 sync_garmin.py          (uses saved token in ~/.garth/)
 """
 
+import argparse
 import getpass
 import json
 import logging
 import re
 import sys
-from datetime import datetime, date, timezone
+from datetime import datetime, date
 from pathlib import Path
 
 try:
@@ -23,11 +24,25 @@ except ImportError:
     print("garth is not installed. Run:  pip3 install garth")
     sys.exit(1)
 
+# ── CLI args ──────────────────────────────────────────────────────────────────
+
+def parse_args():
+    p = argparse.ArgumentParser(description="Sync Garmin activities to Obsidian workout notes.")
+    p.add_argument(
+        "--vault",
+        default=str(Path.home() / "Brain"),
+        metavar="PATH",
+        help="Path to Obsidian vault (default: ~/Brain)",
+    )
+    return p.parse_args()
+
 # ── Paths ─────────────────────────────────────────────────────────────────────
+# VAULT_WORKOUTS and STATE_FILE are module-level so all functions see them.
+# __main__ overrides them from --vault before calling sync().
 
 VAULT_WORKOUTS = Path.home() / "Brain" / "workouts"
-GARTH_HOME     = Path.home() / ".garth"
 STATE_FILE     = Path(__file__).parent / ".sync_state.json"
+GARTH_HOME     = Path.home() / ".garth"
 LOG_FILE       = Path(__file__).parent / "sync.log"
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -288,4 +303,9 @@ def sync():
 
 
 if __name__ == "__main__":
+    args = parse_args()
+    # Override module-level paths before sync() runs
+    VAULT_WORKOUTS = Path(args.vault) / "workouts"  # noqa: F811
+    STATE_FILE     = Path(__file__).parent / ".sync_state.json"  # noqa: F811
+    VAULT_WORKOUTS.mkdir(parents=True, exist_ok=True)
     sync()

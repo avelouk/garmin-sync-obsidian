@@ -12,13 +12,25 @@ This will:
 1. Install the `garth` Python library
 2. Prompt for your Garmin Connect credentials (used once to get an OAuth token — your password is never stored)
 3. Run the first sync immediately
-4. Install a macOS launchd job that syncs every day at 09:00
+4. Install a macOS launchd job that syncs every day at 09:00 **and** on every login/restart
 
 ## Manual sync
 
 ```bash
 python3 sync_garmin.py
 ```
+
+Use `--vault` to target a different vault (e.g. for testing):
+
+```bash
+python3 sync_garmin.py --vault /path/to/other-vault
+```
+
+## Demo vault
+
+Open `demo-vault/` as an Obsidian vault to see what the calendar looks like
+with pre-populated dummy data — no Garmin account needed.
+See [`demo-vault/README.md`](demo-vault/README.md) for instructions.
 
 ## How it works
 
