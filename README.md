@@ -1,11 +1,13 @@
 # garmin-sync-obsidian
 
-Pulls activities from Garmin Connect and creates workout notes in your Obsidian Brain vault (`~/Brain/workouts/`), compatible with the Heatmap Calendar in `Workout routine.md`.
+Pulls activities from Garmin Connect and creates workout notes in your Obsidian vault, compatible with the Heatmap Calendar.
 
 ## Setup (once)
 
+Pass your vault path as an argument, or leave it out to be prompted:
+
 ```bash
-bash install.sh
+bash install.sh ~/path/to/your-vault   # e.g. bash install.sh ~/Brain
 ```
 
 This will:
@@ -17,13 +19,7 @@ This will:
 ## Manual sync
 
 ```bash
-python3 sync_garmin.py
-```
-
-Use `--vault` to target a different vault (e.g. for testing):
-
-```bash
-python3 sync_garmin.py --vault /path/to/other-vault
+python3 sync_garmin.py --vault ~/path/to/your-vault
 ```
 
 ## Demo vault
@@ -36,7 +32,7 @@ See [`demo-vault/README.md`](demo-vault/README.md) for instructions.
 
 - **Auth**: [garth](https://github.com/matin/garth) authenticates against Garmin Connect and saves an OAuth token to `~/.garth/`. You only enter your password once.
 - **Deduplication**: The last synced activity timestamp is saved in `.sync_state.json`. Re-runs only create notes for new activities.
-- **Note format**: Each activity becomes one `.md` file in `~/Brain/workouts/` with YAML frontmatter matching the vault's workout template.
+- **Note format**: Each activity becomes one `.md` file in `<vault>/workouts/` with YAML frontmatter matching the vault's workout template.
 
 ## Activity → color mapping
 
