@@ -3,24 +3,18 @@
 ```dataviewjs
 const calendarData = {
     colors: {
-        orange: ["#ff8c00"],
-        green:  ["#49af5d"],
-        blue:   ["#2288ff"],
-        white:  ["#d0d0d0"],
-        pink:   ["#ff3a9d"],
-        red:    ["#e73400"],
+        orange: ["#ff8c00"],  // Strength: weights, gym, HIIT, yoga
+        red:    ["#e73400"],  // Cardio: running, walking
+        yellow: ["#f5c400"],  // Cycling: all cycling variants
+        green:  ["#49af5d"],  // Team Sports: football, volleyball, basketball...
+        blue:   ["#2288ff"],  // Water Sports: surfing, swimming, diving, kayaking...
+        brown:  ["#c8813a"],  // Hiking: hiking, trekking, mountaineering
+        pink:   ["#ff3a9d"],  // Climbing: bouldering, rock climbing
+        white:  ["#d0d0d0"],  // Winter Sports: skiing, snowboarding
     },
     showCurrentDayBorder: true,
     entries: [],
 }
-
-// Color scheme:
-// orange → Strength Training, Gym, Calisthenics
-// green  → Soccer, Volleyball (team sports)
-// blue   → Surfing, Swimming (water sports)
-// white  → Skiing, Backcountry Skiing (snow)
-// pink   → Bouldering
-// red    → Running, Walking, Hiking, Cycling (distance/cardio)
 
 for (let page of dv.pages('#workouts')) {
     let metadata = app.metadataCache.getFileCache(page.file);
@@ -31,26 +25,34 @@ for (let page of dv.pages('#workouts')) {
     let color = null;
 
     switch(type) {
-        case "Strength Training":
-        case "Calisthenics":
-        case "Gym":
+        case "Strength":
+        case "Strength Training":  // legacy
+        case "Calisthenics":       // legacy
+        case "Gym":                // legacy
             color = "orange"; break;
-        case "Running":
-        case "Walking":
-        case "Hiking":
-        case "Cycling":
+        case "Cardio":
+        case "Running":            // legacy
+        case "Walking":            // legacy
             color = "red"; break;
-        case "Soccer":
-        case "Volleyball":
-        case "Sport":
+        case "Cycling":
+            color = "yellow"; break;
+        case "Team Sports":
+        case "Soccer":             // legacy
+        case "Volleyball":         // legacy
+        case "Sport":              // legacy
             color = "green"; break;
-        case "Surfing":
-        case "Swimming":
+        case "Water Sports":
+        case "Surfing":            // legacy
+        case "Swimming":           // legacy
             color = "blue"; break;
-        case "Bouldering":
+        case "Hiking":
+            color = "brown"; break;
+        case "Climbing":
+        case "Bouldering":         // legacy
             color = "pink"; break;
-        case "Skiing":
-        case "Backcountry Skiing":
+        case "Winter Sports":
+        case "Skiing":             // legacy
+        case "Backcountry Skiing": // legacy
             color = "white"; break;
     }
 
@@ -75,13 +77,23 @@ for (let year = currentYear; year >= startYear; year--) {
 ### Last month's log
 
 ```dataviewjs
-let pages = dv.pages("#workouts").where(b => b.date_of_workout >= DateTime.now().minus({months:1})).groupBy(b => b.date_of_workout)
+let pages = dv.pages("#workouts")
+    .where(p => p.date_of_workout >= DateTime.now().minus({months: 1}))
+    .sort(p => p.date_of_workout, "desc")
 
-for (let group of pages.sort(d => d.key, 'desc')) {
-	dv.header(6, group.key);
-	dv.table(["File", "Exercise", "Set", "Reps", "Time", "Weight"],
-		group.rows
-			.sort(k => k.type, 'asc')
-			.map(k => [k.file.link, k["exercise"], k["sets"], k["reps"], k["time"], k["weight"]]))
-}
+dv.table(
+    ["Date", "Exercise", "Type", "Time", "Distance", "Volume", "Pace / Speed", "Avg HR"],
+    pages.map(p => [
+        p.date_of_workout,
+        p.file.link,
+        p.type,
+        p.time,
+        p.distance   ? p.distance + " km"   : "",
+        p.volume     ? p.volume + " kg"      : "",
+        p.pace       ? p.pace                :
+        p.avg_speed  ? p.avg_speed + " km/h" :
+        p.max_speed  ? "↑ " + p.max_speed + " km/h" : "",
+        p.avg_hr     ? p.avg_hr + " bpm"     : "",
+    ])
+)
 ```
