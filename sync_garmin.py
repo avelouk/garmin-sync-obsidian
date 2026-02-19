@@ -15,6 +15,7 @@ import json
 import logging
 import re
 import sys
+from collections import defaultdict
 from datetime import datetime, date
 from pathlib import Path
 
@@ -139,7 +140,7 @@ def authenticate():
 def load_last_sync() -> datetime:
     """
     Return the datetime of the last successfully synced activity.
-    Falls back to scanning the vault workouts folder for the most recent date.
+    Defaults to 2020-01-01 (fetch everything) if no state file exists.
     """
     if STATE_FILE.exists():
         try:
@@ -148,27 +149,49 @@ def load_last_sync() -> datetime:
         except Exception:
             pass
 
-    # Fallback: derive from existing vault files
-    dates = []
-    for f in VAULT_WORKOUTS.glob("*.md"):
-        m = re.match(r"^(\d{4}-\d{2}-\d{2})", f.stem)
-        if m:
-            try:
-                dates.append(date.fromisoformat(m.group(1)))
-            except ValueError:
-                pass
-
-    if dates:
-        latest = max(dates)
-        log.info("No state file found — using latest vault date %s as baseline.", latest)
-        return datetime(latest.year, latest.month, latest.day)
-
-    log.info("No existing data found — syncing all activities.")
+    log.info("No state file found — fetching all activities from Garmin.")
     return datetime(2020, 1, 1)
 
 
 def save_last_sync(dt: datetime):
     STATE_FILE.write_text(json.dumps({"last_sync": dt.isoformat()}, indent=2))
+
+# ── Vault scan ────────────────────────────────────────────────────────────────
+
+def scan_vault() -> tuple:
+    """
+    Scan existing vault files to build deduplication indexes.
+
+    Returns:
+        existing_ids : set of garmin_id integers already in the vault
+        csv_counts   : defaultdict[(date_str, workout_type) → int] for files
+                       that have no garmin_id (i.e. CSV-imported)
+    """
+    existing_ids = set()
+    csv_counts   = defaultdict(int)
+
+    for f in VAULT_WORKOUTS.glob("*.md"):
+        try:
+            text = f.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        id_match = re.search(r'^garmin_id:\s*"?(\d+)"?', text, re.MULTILINE)
+        if id_match:
+            existing_ids.add(int(id_match.group(1)))
+        else:
+            # CSV-imported — count by (date, type) so we can skip matching Garmin activities
+            date_m = re.search(r'^date_of_workout:\s*"?([^"\n]+)"?', text, re.MULTILINE)
+            type_m = re.search(r'^type:\s*"?([^"\n]+)"?', text, re.MULTILINE)
+            if date_m and type_m:
+                key = (date_m.group(1).strip(), type_m.group(1).strip())
+                csv_counts[key] += 1
+
+    log.info(
+        "Vault scan: %d garmin_id'd notes, %d CSV-imported (date,type) buckets.",
+        len(existing_ids), len(csv_counts),
+    )
+    return existing_ids, csv_counts
 
 # ── Garmin fetch ──────────────────────────────────────────────────────────────
 
@@ -218,7 +241,9 @@ def free_filename(date_str: str, created_this_run: set) -> str:
         count += 1
 
 
-def make_note(date_str, workout_type, exercise, calories, duration, sets="0", reps="0") -> str:
+def make_note(date_str, workout_type, exercise, calories, duration,
+              sets="0", reps="0", garmin_id=None) -> str:
+    garmin_id_line = f'\ngarmin_id: "{garmin_id}"' if garmin_id is not None else ""
     return f"""---
 date_of_workout: "{date_str}"
 exercise: "{exercise}"
@@ -227,7 +252,7 @@ reps: "{reps}"
 time: "{duration}"
 weight: "0"
 type: "{workout_type}"
-calories: "{calories}"
+calories: "{calories}"{garmin_id_line}
 ---
 #workouts
 """
@@ -240,9 +265,13 @@ def sync():
     last_sync = load_last_sync()
     raw       = fetch_activities(last_sync)
 
+    existing_ids, csv_counts = scan_vault()
+    skipped_counts = defaultdict(int)  # tracks CSV-matched skips per (date, type)
+
     created_this_run = set()
     latest_seen      = last_sync
     new_count        = 0
+    skip_count       = 0
     unknown_types    = set()
 
     for act in raw:
@@ -255,7 +284,11 @@ def sync():
                         act.get("activityId"), start_str)
             continue
 
-        # Skip anything already covered
+        # Track latest timestamp regardless (so state file advances properly)
+        if act_time > latest_seen:
+            latest_seen = act_time
+
+        # Skip anything before our baseline
         if act_time <= last_sync:
             continue
 
@@ -269,11 +302,26 @@ def sync():
             workout_type = "Gym"   # safe fallback
         exercise = EXERCISE_MAP.get(workout_type, workout_type)
 
-        # Fields
+        garmin_id = act.get("activityId")
+
+        # ── Deduplication ──────────────────────────────────────────────────────
+
+        # 1) Already synced by garmin_id (from a previous garmin-sync run)
+        if garmin_id and int(garmin_id) in existing_ids:
+            skip_count += 1
+            continue
+
+        # 2) Matches a CSV-imported note (same date + type, within count)
+        key = (date_str, workout_type)
+        if skipped_counts[key] < csv_counts[key]:
+            skipped_counts[key] += 1
+            skip_count += 1
+            continue
+
+        # ── Create note ───────────────────────────────────────────────────────
+
         calories = int(act.get("calories") or 0)
         duration = seconds_to_hms(act.get("duration") or 0)
-
-        # Sets/reps (only meaningful for strength; Garmin may expose them here)
         sets = str(int(act.get("activeSets") or 0))
         reps = str(int(act.get("totalReps")  or 0))
 
@@ -281,14 +329,12 @@ def sync():
         created_this_run.add(filename)
 
         (VAULT_WORKOUTS / filename).write_text(
-            make_note(date_str, workout_type, exercise, calories, duration, sets, reps),
+            make_note(date_str, workout_type, exercise, calories, duration,
+                      sets, reps, garmin_id),
             encoding="utf-8",
         )
         log.info("  Created %-30s (%s, %d cal)", filename, workout_type, calories)
         new_count += 1
-
-        if act_time > latest_seen:
-            latest_seen = act_time
 
     if unknown_types:
         log.warning(
@@ -296,9 +342,11 @@ def sync():
             ", ".join(sorted(unknown_types)),
         )
 
-    if new_count:
-        save_last_sync(latest_seen)
+    if skip_count:
+        log.info("Skipped %d activit(ies) already in vault.", skip_count)
 
+    # Always save state so next run knows where to resume from
+    save_last_sync(latest_seen)
     log.info("Done — %d new note(s) created.", new_count)
 
 

@@ -31,7 +31,7 @@ See [`demo-vault/README.md`](demo-vault/README.md) for instructions.
 ## How it works
 
 - **Auth**: [garth](https://github.com/matin/garth) authenticates against Garmin Connect and saves an OAuth token to `~/.garth/`. You only enter your password once.
-- **Deduplication**: The last synced activity timestamp is saved in `.sync_state.json`. Re-runs only create notes for new activities.
+- **Deduplication**: Each synced note stores a `garmin_id` in its frontmatter. On every run the vault is scanned first, so activities already present are never duplicated — even if you imported historical data from a Garmin CSV export before setting this up. The last synced timestamp is saved in `.sync_state.json` to limit future API calls.
 - **Note format**: Each activity becomes one `.md` file in `<vault>/workouts/` with YAML frontmatter matching the vault's workout template.
 
 ## Activity → color mapping
