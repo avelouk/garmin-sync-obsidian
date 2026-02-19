@@ -2,6 +2,8 @@
 
 Pulls activities from Garmin Connect and creates workout notes in your Obsidian vault, compatible with the Heatmap Calendar.
 
+<img width="868" height="1118" alt="Screenshot 2026-02-18 at 23 48 48" src="https://github.com/user-attachments/assets/8cb543c2-63ea-442a-ae4e-b7c8f0bbefe8" />
+
 ## Setup (once)
 
 Pass your vault path as an argument, or leave it out to be prompted:
