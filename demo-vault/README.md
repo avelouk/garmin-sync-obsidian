@@ -1,7 +1,7 @@
 # Demo Vault
 
 This is a sample Obsidian vault to preview how garmin-sync-obsidian works.
-It contains 94 dummy workout entries spanning 2024–2026.
+It contains real workout entries synced from Garmin Connect spanning 2024–2026.
 
 ## How to open
 
@@ -14,7 +14,7 @@ It contains 94 dummy workout entries spanning 2024–2026.
    Settings → Dataview → turn on **Enable JavaScript Queries**
    (the calendar uses a `dataviewjs` block and won't render without this)
 
-4. Open **Workout view.md** to see the calendar
+4. Open **Workout view.md** to see the calendar and last month's log
 
 ## Test the sync script against this vault
 
@@ -27,13 +27,16 @@ verify everything works before pointing it at your actual vault.
 
 ## What you'll see
 
-A colour-coded activity calendar stacked by year (2024 → 2026):
+A colour-coded activity calendar stacked by year, plus a last month's log
+grouped by date showing exercise, time, distance, volume, pace/speed, and HR.
 
-| Colour | Activity types |
-|--------|---------------|
-| 🟠 Orange | Strength Training, Gym, Calisthenics |
-| 🔴 Red | Running, Walking, Hiking, Cycling |
-| 🟢 Green | Soccer, Volleyball |
-| 🔵 Blue | Surfing, Swimming |
-| ⬜ White/Gray | Skiing, Backcountry Skiing |
-| 🩷 Pink | Bouldering |
+| Colour | Category | Activity types |
+|--------|----------|---------------|
+| 🟠 Orange | Strength | Strength training, gym, HIIT, yoga, boxing... |
+| 🔴 Red | Cardio | Running, walking |
+| 🟡 Yellow | Cycling | All cycling variants, e-bikes |
+| 🟢 Green | Team Sports | Football, volleyball, basketball, rugby... |
+| 🔵 Blue | Water Sports | Surfing, swimming, kayaking, diving, sailing... |
+| 🟤 Brown | Hiking | Hiking, mountaineering, snowshoeing |
+| 🩷 Pink | Climbing | Bouldering, rock climbing |
+| ⬜ White | Winter Sports | Skiing, snowboarding, backcountry skiing |

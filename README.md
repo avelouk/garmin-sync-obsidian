@@ -32,22 +32,39 @@ See [`demo-vault/README.md`](demo-vault/README.md) for instructions.
 
 - **Auth**: [garth](https://github.com/matin/garth) authenticates against Garmin Connect and saves an OAuth token to `~/.garth/`. You only enter your password once.
 - **Deduplication**: Each synced note stores a `garmin_id` in its frontmatter. On every run the vault is scanned first, so activities already present are never duplicated — even if you imported historical data from a Garmin CSV export before setting this up. The last synced timestamp is saved in `.sync_state.json` to limit future API calls.
-- **Note format**: Each activity becomes one `.md` file in `<vault>/workouts/` with YAML frontmatter matching the vault's workout template.
+- **Note format**: Each activity becomes one `.md` file in `<vault>/workouts/` with YAML frontmatter only — no body content, so all fields are queryable via Dataview.
 
-## Activity → color mapping
+## Note fields
 
-| Color | Types |
+Every note contains a `type` (broad category for color coding) and an `exercise` (specific activity name). Additional fields are included based on the activity category:
+
+| Category | Extra fields |
 |---|---|
-| 🟠 Orange | Strength Training, Gym, Calisthenics |
-| 🔴 Red | Running, Walking, Hiking, Cycling |
-| 🟢 Green | Soccer, Volleyball |
-| 🔵 Blue | Surfing, Swimming |
-| ⬜ White | Skiing, Backcountry Skiing |
-| 🩷 Pink | Bouldering |
+| Strength | `volume` (kg), `exercises` (named list), `avg_hr`, `max_hr` |
+| Cardio | `distance` (km), `pace` (min/km), `avg_hr`, `max_hr` |
+| Cycling | `distance` (km), `avg_speed` (km/h), `avg_hr`, `max_hr` |
+| Winter Sports | `distance` (km), `max_speed` (km/h), `elevation_gain` (m) |
+| Hiking | `distance` (km), `elevation_gain` (m), `avg_hr`, `max_hr` |
+| Water Sports | `distance` (km), `avg_hr`, `max_hr` |
+| Climbing | `attempts`, `sends`, `max_grade` (Vermin scale), `avg_hr`, `max_hr` |
+| Team Sports | `avg_hr`, `max_hr` |
+
+## Heatmap color mapping
+
+| Color | Category | Activity types |
+|---|---|---|
+| 🟠 Orange | Strength | Strength training, gym, HIIT, yoga, boxing... |
+| 🔴 Red | Cardio | Running, walking |
+| 🟡 Yellow | Cycling | All cycling variants, e-bikes |
+| 🟢 Green | Team Sports | Football, volleyball, basketball, rugby... |
+| 🔵 Blue | Water Sports | Surfing, swimming, kayaking, diving, sailing... |
+| 🟤 Brown | Hiking | Hiking, mountaineering, snowshoeing |
+| 🩷 Pink | Climbing | Bouldering, rock climbing |
+| ⬜ White | Winter Sports | Skiing, snowboarding, backcountry skiing |
 
 ## Adding new Garmin activity types
 
-If a new activity type appears in the log as `Unknown Garmin type`, add it to `TYPE_MAP` in `sync_garmin.py`.
+If a new activity type appears in the log as `Unknown Garmin type`, add it to `TYPE_MAP` and `EXERCISE_MAP` in `sync_garmin.py`.
 
 ## Logs
 

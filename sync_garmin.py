@@ -597,8 +597,15 @@ def get_stat_fields(act, workout_type) -> dict:
             fields["distance"] = round(distance_m / 1000, 2)
 
     elif workout_type == "Climbing":
-        fields["attempts"] = 0
-        fields["sends"]    = 0
+        active = next(
+            (s for s in (act.get("splitSummaries") or []) if s.get("splitType") == "CLIMB_ACTIVE"),
+            None
+        )
+        fields["attempts"] = int(active["noOfSplits"])   if active else 0
+        fields["sends"]    = int(active["numClimbSends"]) if active else 0
+        grade = (active or {}).get("maxGradeValue", {})
+        if grade.get("valueKey"):
+            fields["max_grade"] = grade["valueKey"]
 
     return fields
 

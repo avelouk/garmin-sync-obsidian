@@ -79,21 +79,25 @@ for (let year = currentYear; year >= startYear; year--) {
 ```dataviewjs
 let pages = dv.pages("#workouts")
     .where(p => p.date_of_workout >= DateTime.now().minus({months: 1}))
-    .sort(p => p.date_of_workout, "desc")
+    .groupBy(p => p.date_of_workout)
 
-dv.table(
-    ["Date", "Exercise", "Type", "Time", "Distance", "Volume", "Pace / Speed", "Avg HR"],
-    pages.map(p => [
-        p.date_of_workout,
-        p.file.link,
-        p.type,
-        p.time,
-        p.distance   ? p.distance + " km"   : "",
-        p.volume     ? p.volume + " kg"      : "",
-        p.pace       ? p.pace                :
-        p.avg_speed  ? p.avg_speed + " km/h" :
-        p.max_speed  ? "↑ " + p.max_speed + " km/h" : "",
-        p.avg_hr     ? p.avg_hr + " bpm"     : "",
-    ])
-)
+for (let group of pages.sort(d => d.key, "desc")) {
+    dv.header(6, group.key)
+    dv.table(
+        ["Exercise", "Type", "Time", "Distance", "Volume", "Pace / Speed", "Avg HR"],
+        group.rows
+            .sort(k => k.type, "asc")
+            .map(p => [
+                p.file.link,
+                p.exercise,
+                p.time,
+                p.distance  ? p.distance + " km"          : "",
+                p.volume    ? p.volume + " kg"             : "",
+                p.pace      ? p.pace                       :
+                p.avg_speed ? p.avg_speed + " km/h"        :
+                p.max_speed ? "↑ " + p.max_speed + " km/h" : "",
+                p.avg_hr    ? p.avg_hr + " bpm"            : "",
+            ])
+    )
+}
 ```
