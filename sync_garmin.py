@@ -75,6 +75,7 @@ TYPE_MAP = {
     "mountain_biking":                  "Cycling",
     "indoor_cycling":                   "Cycling",
     "surfing":                          "Surfing",
+    "surfing_v2":                       "Surfing",
     "open_water_swimming":              "Swimming",
     "swimming":                         "Swimming",
     "lap_swimming":                     "Swimming",
