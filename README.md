@@ -50,6 +50,7 @@ Every note contains a `type` (broad category for color coding) and an `exercise`
 | Water Sports | `distance` (km), `avg_hr`, `max_hr` |
 | Climbing | `attempts`, `sends`, `max_grade` (Vermin scale), `avg_hr`, `max_hr` |
 | Team Sports | `avg_hr`, `max_hr` |
+| Sport | `avg_hr`, `max_hr` |
 
 ## Heatmap color mapping
 
@@ -59,8 +60,9 @@ Every note contains a `type` (broad category for color coding) and an `exercise`
 | 🔴 Red | Cardio | Running, walking |
 | 🟡 Yellow | Cycling | All cycling variants, e-bikes |
 | 🟢 Green | Team Sports | Football, volleyball, basketball, rugby... |
+| 🟣 Purple | Sport | Martial arts, tennis, badminton, squash, racket sports... |
 | 🔵 Blue | Water Sports | Surfing, swimming, kayaking, diving, sailing... |
-| 🟤 Brown | Hiking | Hiking, mountaineering, snowshoeing |
+| 🩲 Teal | Hiking | Hiking, mountaineering, snowshoeing |
 | 🩷 Pink | Climbing | Bouldering, rock climbing |
 | ⬜ White | Winter Sports | Skiing, snowboarding, backcountry skiing |
 

@@ -63,8 +63,8 @@ log = logging.getLogger(__name__)
 # Garmin typeKey → vault `type` field
 
 # Garmin typeKey → broad category (used for `type` field and heatmap color)
-# 8 categories: Cardio | Cycling | Strength | Team Sports | Water Sports |
-#               Hiking | Climbing | Winter Sports
+# 9 categories: Cardio | Cycling | Strength | Team Sports | Sport |
+#               Water Sports | Hiking | Climbing | Winter Sports
 TYPE_MAP = {
     # ── Cardio (Running + Walking) ────────────────────────────────────────────
     "running":                          "Cardio",
@@ -125,8 +125,6 @@ TYPE_MAP = {
     "meditation":                       "Strength",
     "breathwork":                       "Strength",
     "mobility":                         "Strength",
-    "boxing":                           "Strength",
-    "mixed_martial_arts":               "Strength",
     "toe_to_toe":                       "Strength",
     "toe_to_toe_no_tm":                 "Strength",
     "dance":                            "Strength",
@@ -155,17 +153,22 @@ TYPE_MAP = {
     "softball":                         "Team Sports",
     "ice_hockey":                       "Team Sports",
     "cricket":                          "Team Sports",
-    "tennis":                           "Team Sports",
-    "table_tennis":                     "Team Sports",
-    "badminton":                        "Team Sports",
-    "squash":                           "Team Sports",
-    "racquetball":                      "Team Sports",
-    "paddelball":                       "Team Sports",
-    "platform_tennis":                  "Team Sports",
-    "pickleball":                       "Team Sports",
-    "racket_sports":                    "Team Sports",
-    "racquet_sports":                   "Team Sports",
-    "disc_golf":                        "Team Sports",
+
+    # ── Sport (individual / 1v1) ─────────────────────────────────────────────
+    "boxing":                           "Sport",
+    "mixed_martial_arts":               "Sport",
+    "tennis":                           "Sport",
+    "table_tennis":                     "Sport",
+    "badminton":                        "Sport",
+    "squash":                           "Sport",
+    "racquetball":                      "Sport",
+    "paddelball":                       "Sport",
+    "platform_tennis":                  "Sport",
+    "pickleball":                       "Sport",
+    "racket_sports":                    "Sport",
+    "racquet_sports":                   "Sport",
+    "disc_golf":                        "Sport",
+    "fencing":                          "Sport",
 
     # ── Water Sports ──────────────────────────────────────────────────────────
     "surfing":                          "Water Sports",

@@ -7,8 +7,9 @@ const calendarData = {
         red:    ["#e73400"],  // Cardio: running, walking
         yellow: ["#f5c400"],  // Cycling: all cycling variants
         green:  ["#49af5d"],  // Team Sports: football, volleyball, basketball...
+        purple: ["#9b59b6"],  // Sport: martial arts, racket sports, individual sports
         blue:   ["#2288ff"],  // Water Sports: surfing, swimming, diving, kayaking...
-        brown:  ["#c8813a"],  // Hiking: hiking, trekking, mountaineering
+        teal:   ["#2ca58d"],  // Hiking: hiking, trekking, mountaineering
         pink:   ["#ff3a9d"],  // Climbing: bouldering, rock climbing
         white:  ["#d0d0d0"],  // Winter Sports: skiing, snowboarding
     },
@@ -39,14 +40,16 @@ for (let page of dv.pages('#workouts')) {
         case "Team Sports":
         case "Soccer":             // legacy
         case "Volleyball":         // legacy
-        case "Sport":              // legacy
+        case "Football":           // legacy
             color = "green"; break;
+        case "Sport":
+            color = "purple"; break;
         case "Water Sports":
         case "Surfing":            // legacy
         case "Swimming":           // legacy
             color = "blue"; break;
         case "Hiking":
-            color = "brown"; break;
+            color = "teal"; break;
         case "Climbing":
         case "Bouldering":         // legacy
             color = "pink"; break;
